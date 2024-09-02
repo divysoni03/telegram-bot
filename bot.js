@@ -3,11 +3,9 @@ const axios = require('axios');
 const ffmpeg = require('fluent-ffmpeg');
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config();  // Ensure .env variables are loaded
 
-// Replace with your Telegram bot token
-require('dotenv').config();
 const token = process.env.TELEGRAM_BOT_TOKEN;
-
 const bot = new TelegramBot(token, { polling: true });
 
 const helpingVideo = path.join(__dirname, 'helpVideo.mp4');
@@ -47,8 +45,7 @@ bot.on('voice', async (msg) => {
         writer.on('finish', () => {
             ffmpeg(inputFilePath)
                 .audioFilters('asetrate=44100*1.6,aresample=44100,atempo=1.0')
-                .audioFilters('afftdn')
-                .save(outputFilePath)
+                .audioFilters('afftdn')  // Noise reduction filter
                 .on('end', async () => {
                     await bot.sendVoice(chatId, outputFilePath);
                     fs.unlinkSync(inputFilePath);
@@ -57,7 +54,8 @@ bot.on('voice', async (msg) => {
                 .on('error', (err) => {
                     console.error('Error during conversion:', err);
                     bot.sendMessage(chatId, 'Sorry, something went wrong during the conversion.');
-                });
+                })
+                .save(outputFilePath);
         });
     } catch (error) {
         console.error('Error processing voice message:', error);
