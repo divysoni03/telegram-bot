@@ -5,8 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Replace with your Telegram bot token
-require('dotenv').config();
-const token = process.env.TELEGRAM_BOT_TOKEN;
+const token = TELEGRAM_BOT_TOKEN;
 
 const bot = new TelegramBot(token, { polling: true });
 
